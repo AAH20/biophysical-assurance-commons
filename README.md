@@ -53,13 +53,15 @@ The runnable slice implements strict v2 schema parsing, fresh and purpose-bound 
 
 ## Run the baseline
 
-Python 3.10+ and the standard library are enough:
+Python 3.10+ and the standard library are enough to run the replay and tests:
 
 ```bash
 PYTHONPATH=packages/assurance-core/src python -m biophysical_assurance.cli run packages/assurance-contracts/scenarios/expired-consent-handover.v2.json --out out/my-first-v2-run
 PYTHONPATH=packages/assurance-core/src python -m biophysical_assurance.cli verify packages/assurance-contracts/scenarios/expired-consent-handover.v2.json out/my-first-v2-run
-make check
+PYTHONPATH=packages/assurance-core/src python -m unittest discover -s packages/assurance-core/tests -v
 ```
+
+For the additional lint/format checks, install Ruff and run `make check`.
 
 The expected first decision is `allow`; the second is `deny` with `consent_inactive`. `report.json` has zero false allows and zero false denies against the scenario's expected decisions. `receipts.jsonl` contains a SHA-256 chain bound to the scenario, policy and action digests. Verification recomputes each policy decision. The chain detects local editing if the scenario and expected root are retained or anchored externally; it is **not** a digital signature and does not establish who ran the test. Output directories are staged and existing directories are rejected rather than silently overwritten.
 
