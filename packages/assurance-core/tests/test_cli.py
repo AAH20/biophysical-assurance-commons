@@ -45,6 +45,9 @@ class CliTests(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertTrue((bundle / "auth.json").exists())
+            envelope = json.loads((bundle / "assurance-result.json").read_text())
+            self.assertEqual(envelope["schema_version"], "bpa.assurance-result.v1")
+            self.assertIsNone(envelope["qualification"]["score"])
             result = call(
                 "verify", str(SCENARIO), str(bundle), "--auth-key-file", str(key)
             )
