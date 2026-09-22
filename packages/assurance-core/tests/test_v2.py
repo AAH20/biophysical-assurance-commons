@@ -13,6 +13,7 @@ sys.path.insert(0, str(CORE_ROOT / "src"))
 from biophysical_assurance.core import load_scenario, replay, verify_receipts
 from biophysical_assurance.evidence import make_auth_tag, verify_auth_tag
 from biophysical_assurance.parsing import loads_strict
+from biophysical_assurance.result_contract import from_replay
 from biophysical_assurance.storage import publish_bundle, read_receipts
 from biophysical_assurance.validation import parse_scenario
 
@@ -28,6 +29,11 @@ class V2Tests(unittest.TestCase):
         self.assertEqual(receipts[1]["result"]["reasons"], ["consent_inactive"])
         self.assertNotIn("expected_allow", receipts[0]["result"])
         self.assertTrue(verify_receipts(receipts, self.scenario))
+        envelope = from_replay(self.scenario, report, receipts)
+        self.assertEqual(envelope["qualification"]["failed_gates"], [])
+        self.assertEqual(
+            envelope["evidence"]["receipt_root_sha256"], receipts[-1]["sha256"]
+        )
 
     def test_stale_all_evidence_denied(self):
         scenario = load_scenario(SCENARIOS / "stale-evidence-handover.v2.json")

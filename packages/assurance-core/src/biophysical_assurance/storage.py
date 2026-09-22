@@ -20,7 +20,11 @@ def _write_private(path: Path, content: str) -> None:
 
 
 def publish_bundle(
-    path: str | Path, report: dict, receipts: list[dict], auth_tag: dict | None = None
+    path: str | Path,
+    report: dict,
+    receipts: list[dict],
+    auth_tag: dict | None = None,
+    result_envelope: dict | None = None,
 ) -> Path:
     """Stage a bundle in the destination filesystem, then rename it into place."""
     destination = Path(path)
@@ -45,6 +49,11 @@ def publish_bundle(
             _write_private(
                 stage / "auth.json",
                 json.dumps(auth_tag, indent=2, allow_nan=False) + "\n",
+            )
+        if result_envelope is not None:
+            _write_private(
+                stage / "assurance-result.json",
+                json.dumps(result_envelope, indent=2, allow_nan=False) + "\n",
             )
         os.rename(stage, destination)
         return destination

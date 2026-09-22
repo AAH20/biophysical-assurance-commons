@@ -9,6 +9,7 @@ from pathlib import Path
 from .core import load_scenario, replay, verify_receipts
 from .evidence import make_auth_tag, verify_auth_tag
 from .parsing import read_json
+from .result_contract import from_replay
 from .storage import publish_bundle, read_receipts
 
 
@@ -54,7 +55,9 @@ def _run(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
             key_id=args.key_id,
         )
     output = args.out or f"out/{scenario['scenario_id']}"
-    publish_bundle(output, report, receipts, tag)
+    publish_bundle(
+        output, report, receipts, tag, from_replay(scenario, report, receipts)
+    )
     print(f"evidence: {output}")
     print(
         f"decision regression: {'PASS' if report['pass'] else 'FAIL'}; "
@@ -74,6 +77,14 @@ def _verify(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
         valid = False
     if report_file.exists():
         valid = valid and read_json(report_file) == replay(scenario)[0]
+    result_file = bundle / "assurance-result.json"
+    if source.is_dir() and not result_file.exists():
+        valid = False
+    if result_file.exists():
+        expected_report, expected_receipts = replay(scenario)
+        valid = valid and read_json(result_file) == from_replay(
+            scenario, expected_report, expected_receipts
+        )
     tag_file = bundle / "auth.json"
     if tag_file.exists():
         if not args.auth_key_file:
