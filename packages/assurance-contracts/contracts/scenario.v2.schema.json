@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:biophysical-assurance:scenario:v2",
+  "title": "BioPhysical Assurance synthetic scenario v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "scenario_id", "environment", "consent", "identity_assertion", "policy", "action_requests"],
+  "properties": {
+    "schema_version": {"const": "bpa.scenario.v2"},
+    "scenario_id": {"$ref": "#/$defs/ref"},
+    "environment": {"const": "synthetic"},
+    "description": {"type": "string"},
+    "consent": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/consent"}]},
+    "identity_assertion": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/identity"}]},
+    "policy": {"$ref": "#/$defs/policy"},
+    "action_requests": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10000,
+      "items": {"$ref": "#/$defs/action"}
+    }
+  },
+  "$defs": {
+    "ref": {"type": "string", "minLength": 1, "maxLength": 256},
+    "time": {"type": "integer", "minimum": 0},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "consent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_ref", "purpose", "scope", "valid_from_ms", "valid_until_ms", "revoked_at_ms"],
+      "properties": {
+        "subject_ref": {"$ref": "#/$defs/ref"},
+        "purpose": {"$ref": "#/$defs/ref"},
+        "scope": {"$ref": "#/$defs/ref"},
+        "valid_from_ms": {"$ref": "#/$defs/time"},
+        "valid_until_ms": {"$ref": "#/$defs/time"},
+        "revoked_at_ms": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/time"}]}
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_ref", "issuer_ref", "purpose", "scope", "verified", "issued_at_ms", "expires_at_ms"],
+      "properties": {
+        "subject_ref": {"$ref": "#/$defs/ref"},
+        "issuer_ref": {"$ref": "#/$defs/ref"},
+        "purpose": {"$ref": "#/$defs/ref"},
+        "scope": {"$ref": "#/$defs/ref"},
+        "verified": {"type": "boolean"},
+        "issued_at_ms": {"$ref": "#/$defs/time"},
+        "expires_at_ms": {"$ref": "#/$defs/time"}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_ref", "min_model_confidence", "max_identity_age_ms", "max_proposal_age_ms", "require_bci_intent", "require_human_approval"],
+      "properties": {
+        "policy_ref": {"$ref": "#/$defs/ref"},
+        "min_model_confidence": {"$ref": "#/$defs/confidence"},
+        "max_identity_age_ms": {"type": "integer", "minimum": 1},
+        "max_proposal_age_ms": {"type": "integer", "minimum": 1},
+        "require_bci_intent": {"type": "boolean"},
+        "require_human_approval": {"type": "boolean"}
+      }
+    },
+    "proposal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_ref", "created_at_ms", "confidence"],
+      "properties": {
+        "model_ref": {"$ref": "#/$defs/ref"},
+        "created_at_ms": {"$ref": "#/$defs/time"},
+        "confidence": {"$ref": "#/$defs/confidence"}
+      }
+    },
+    "timed_boolean": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "issued_at_ms", "expires_at_ms"],
+      "properties": {
+        "value": {"type": "boolean"},
+        "issued_at_ms": {"$ref": "#/$defs/time"},
+        "expires_at_ms": {"$ref": "#/$defs/time"}
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_id", "at_ms", "subject_ref", "purpose", "scope", "proposal", "intent", "safety", "approval", "expected_allow"],
+      "properties": {
+        "request_id": {"$ref": "#/$defs/ref"},
+        "at_ms": {"$ref": "#/$defs/time"},
+        "subject_ref": {"$ref": "#/$defs/ref"},
+        "purpose": {"$ref": "#/$defs/ref"},
+        "scope": {"$ref": "#/$defs/ref"},
+        "proposal": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/proposal"}]},
+        "intent": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/timed_boolean"}]},
+        "safety": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/timed_boolean"}]},
+        "approval": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/timed_boolean"}]},
+        "expected_allow": {"type": "boolean"}
+      }
+    }
+  }
+}

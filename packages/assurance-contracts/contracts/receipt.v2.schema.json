@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:biophysical-assurance:receipt:v2",
+  "title": "BioPhysical Assurance decision receipt v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["receipt_version", "evaluator_version", "scenario_id", "scenario_sha256", "policy_sha256", "action_sha256", "sequence", "previous_sha256", "result", "sha256"],
+  "properties": {
+    "receipt_version": {"const": "bpa.receipt.v2"},
+    "evaluator_version": {"type": "string"},
+    "scenario_id": {"type": "string"},
+    "scenario_sha256": {"$ref": "#/$defs/sha256"},
+    "policy_sha256": {"$ref": "#/$defs/sha256"},
+    "action_sha256": {"$ref": "#/$defs/sha256"},
+    "sequence": {"type": "integer", "minimum": 0},
+    "previous_sha256": {"$ref": "#/$defs/sha256"},
+    "sha256": {"$ref": "#/$defs/sha256"},
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_id", "at_ms", "decision", "reasons"],
+      "properties": {
+        "request_id": {"type": "string"},
+        "at_ms": {"type": "integer", "minimum": 0},
+        "decision": {"enum": ["allow", "deny"]},
+        "reasons": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

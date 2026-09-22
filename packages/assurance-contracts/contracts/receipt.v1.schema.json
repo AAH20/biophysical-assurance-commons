@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:biophysical-assurance:receipt:v1",
+  "title": "BioPhysical Assurance receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["receipt_version", "scenario_id", "scenario_sha256", "sequence", "previous_sha256", "result", "sha256"],
+  "properties": {
+    "receipt_version": {"const": "bpa.receipt.v1"},
+    "scenario_id": {"type": "string"},
+    "scenario_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sequence": {"type": "integer", "minimum": 0},
+    "previous_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_id", "at_ms", "decision", "reasons", "expected_allow"],
+      "properties": {
+        "request_id": {"type": "string"},
+        "at_ms": {"type": "integer"},
+        "decision": {"enum": ["allow", "deny"]},
+        "reasons": {"type": "array", "items": {"type": "string"}},
+        "expected_allow": {"type": "boolean"}
+      }
+    }
+  }
+}

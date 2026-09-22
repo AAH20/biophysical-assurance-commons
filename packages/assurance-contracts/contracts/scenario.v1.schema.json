@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:biophysical-assurance:scenario:v1",
+  "title": "BioPhysical Assurance synthetic scenario v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "scenario_id", "consent", "identity_assertion", "policy", "action_requests"],
+  "properties": {
+    "schema_version": {"const": "bpa.scenario.v1"},
+    "scenario_id": {"type": "string", "minLength": 1},
+    "description": {"type": "string"},
+    "consent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_ref", "purpose", "scope", "valid_from_ms", "valid_until_ms", "revoked_at_ms"],
+      "properties": {
+        "subject_ref": {"type": "string"},
+        "purpose": {"type": "string"},
+        "scope": {"type": "string"},
+        "valid_from_ms": {"type": "integer"},
+        "valid_until_ms": {"type": "integer"},
+        "revoked_at_ms": {"type": ["integer", "null"]}
+      }
+    },
+    "identity_assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_ref", "verified", "expires_at_ms"],
+      "properties": {
+        "subject_ref": {"type": "string"},
+        "verified": {"type": "boolean"},
+        "expires_at_ms": {"type": "integer"}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min_model_confidence", "require_bci_intent", "require_human_approval"],
+      "properties": {
+        "min_model_confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "require_bci_intent": {"type": "boolean"},
+        "require_human_approval": {"type": "boolean"}
+      }
+    },
+    "action_requests": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["request_id", "at_ms", "purpose", "scope", "bci_intent_present", "model_confidence", "safety_clear", "human_approved", "expected_allow"],
+        "properties": {
+          "request_id": {"type": "string", "minLength": 1},
+          "at_ms": {"type": "integer"},
+          "purpose": {"type": "string"},
+          "scope": {"type": "string"},
+          "bci_intent_present": {"type": "boolean"},
+          "model_confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "safety_clear": {"type": "boolean"},
+          "human_approved": {"type": "boolean"},
+          "expected_allow": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}

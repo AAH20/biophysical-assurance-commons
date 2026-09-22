@@ -1,0 +1,45 @@
+{
+  "schema_version": "bpa.scenario.v2",
+  "scenario_id": "synthetic-handover-v2-stale-evidence",
+  "environment": "synthetic",
+  "description": "Expired identity, proposal, intent, safety, and approval must all be visible in the denial.",
+  "consent": {
+    "subject_ref": "synthetic-subject-003",
+    "purpose": "laboratory-handover",
+    "scope": "robot-hand-handover",
+    "valid_from_ms": 0,
+    "valid_until_ms": 5000,
+    "revoked_at_ms": null
+  },
+  "identity_assertion": {
+    "subject_ref": "synthetic-subject-003",
+    "issuer_ref": "synthetic-local-verifier",
+    "purpose": "laboratory-handover",
+    "scope": "robot-hand-handover",
+    "verified": true,
+    "issued_at_ms": 100,
+    "expires_at_ms": 700
+  },
+  "policy": {
+    "policy_ref": "handover-policy-v2",
+    "min_model_confidence": 0.8,
+    "max_identity_age_ms": 500,
+    "max_proposal_age_ms": 100,
+    "require_bci_intent": true,
+    "require_human_approval": true
+  },
+  "action_requests": [
+    {
+      "request_id": "handover-stale",
+      "at_ms": 1000,
+      "subject_ref": "synthetic-subject-003",
+      "purpose": "laboratory-handover",
+      "scope": "robot-hand-handover",
+      "proposal": {"model_ref": "synthetic-vla-v1", "created_at_ms": 500, "confidence": 0.99},
+      "intent": {"value": true, "issued_at_ms": 500, "expires_at_ms": 700},
+      "safety": {"value": true, "issued_at_ms": 500, "expires_at_ms": 700},
+      "approval": {"value": true, "issued_at_ms": 500, "expires_at_ms": 700},
+      "expected_allow": false
+    }
+  ]
+}

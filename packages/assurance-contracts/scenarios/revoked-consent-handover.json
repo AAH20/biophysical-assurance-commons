@@ -1,0 +1,47 @@
+{
+  "schema_version": "bpa.scenario.v1",
+  "scenario_id": "synthetic-handover-consent-revoked",
+  "description": "Revocation takes precedence over a still-valid nominal consent window.",
+  "consent": {
+    "subject_ref": "synthetic-subject-002",
+    "purpose": "laboratory-handover",
+    "scope": "robot-hand-handover",
+    "valid_from_ms": 0,
+    "valid_until_ms": 5000,
+    "revoked_at_ms": 1500
+  },
+  "identity_assertion": {
+    "subject_ref": "synthetic-subject-002",
+    "verified": true,
+    "expires_at_ms": 5000
+  },
+  "policy": {
+    "min_model_confidence": 0.8,
+    "require_bci_intent": false,
+    "require_human_approval": true
+  },
+  "action_requests": [
+    {
+      "request_id": "handover-before-revocation",
+      "at_ms": 1000,
+      "purpose": "laboratory-handover",
+      "scope": "robot-hand-handover",
+      "bci_intent_present": false,
+      "model_confidence": 0.94,
+      "safety_clear": true,
+      "human_approved": true,
+      "expected_allow": true
+    },
+    {
+      "request_id": "handover-after-revocation",
+      "at_ms": 1700,
+      "purpose": "laboratory-handover",
+      "scope": "robot-hand-handover",
+      "bci_intent_present": false,
+      "model_confidence": 0.94,
+      "safety_clear": true,
+      "human_approved": true,
+      "expected_allow": false
+    }
+  ]
+}

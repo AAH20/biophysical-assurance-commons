@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "biophysical-assurance-commons"
+version = "0.2.0"
+description = "Offline, synthetic assurance replay for physical and biological AI governance"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+
+[project.scripts]
+bpa = "biophysical_assurance.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
